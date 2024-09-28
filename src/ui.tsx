@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { Flex, Text, RadioGroup, Button, Textarea, Switch, Label } from "figma-kit"
+import { Flex, Text, RadioGroup, Button, Link, Switch, Label } from "figma-kit"
 import "figma-kit/styles.css";
 
 const App: React.FC = () => {
@@ -46,7 +46,7 @@ const App: React.FC = () => {
     <main>
       <Flex direction="column" gap="5">
           <Flex direction="column" gap="2">
-            <Text>Select a format</Text>
+            <Text style={{color: 'var(--figma-color-text-secondary)'}}>Select a format</Text>
             <RadioGroup.Root value={format} onValueChange={(value) => setFormat(value as "csv" | "json")}>
               <RadioGroup.Label>
                 <RadioGroup.Item
@@ -109,6 +109,10 @@ const App: React.FC = () => {
               </Flex>
             </>
           }
+      <Text style={{color: 'var(--figma-color-text-secondary)'}}>
+        This is an open source plugin. <Link href="https://github.com/atropical/devvy">Contribute ↗</Link>
+        <br />
+        Initiated by <Link href="https://atropical.no?utm_source=figma-plugin">Atropical</Link>.</Text>
       </Flex>
     </main>
   );
