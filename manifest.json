@@ -1,0 +1,14 @@
+{
+  "name": "Devv",
+  "id": "1341506281991381482",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/src/index.html",
+  "editorType": ["figma", "dev"],
+  "capabilities": ["inspect"],
+  "enableProposedApi": true,
+  "menu": [{ "command": "export", "name": "Export Variables" }],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
