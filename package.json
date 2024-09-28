@@ -16,9 +16,8 @@
     "tsc:watch": "npm run tsc -- --watch --preserveWatchOutput"
   },
   "author": "Atropical AS",
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "dependencies": {
-    "figma-kit": "^1.0.0-beta.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
