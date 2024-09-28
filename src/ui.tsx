@@ -70,33 +70,44 @@ const App: React.FC = () => {
             >
                 Export Variables
           </Button>
-          <Flex gap="2"><Switch id="devvy-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="devvy-preview-output">Preview output</Label></Flex>
+          <Flex gap="2" grow="2"><Switch id="devvy-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="devvy-preview-output">Preview output</Label></Flex>
           {
-            seeOutput && exportedData && <Flex direction="column"
-              style={{
-                overflow: 'auto',
-                maxHeight: 'calc(90vh - 155px)',
-                border: 'var(--figma-color-border)',
-                borderRadius: 4,
-                padding: 8,
-                backgroundColor: 'rgba(0,0,0,.25)',
-              }}>
-              <Flex direction="column">
-                <Button
-                  variant="secondary"
-                  onClick={handleSelectToCopy}
-                  style={{ alignSelf: 'end' }}
-                >
-                  Select to Copy
-                </Button>
-                <Text>
-                  <pre
-                  id="devvy-exported-output"
-                    contentEditable
-                  >{exportedData.toString()}</pre>
-                </Text>
+            seeOutput && exportedData && 
+            <>
+              <Text>Code Preview:</Text>
+              <Flex direction="column"
+                style={{
+                  position: 'relative',
+                  border: 'var(--figma-color-border)',
+                  borderRadius: 4,
+                  padding: 8,
+                  backgroundColor: 'rgba(0,0,0,.25)',
+                }}>
+                <Flex direction="column">
+                  <Button
+                    variant="secondary"
+                    onClick={handleSelectToCopy}
+                    style={{
+                      alignSelf: 'end',
+                      position: 'sticky',
+                      top: 4,
+                      right: 4,
+                      backdropFilter: 'blur(4px)'
+                    }}
+                  >
+                    Select to Copy
+                  </Button>
+                  <Text>
+                    <pre
+                      id="devvy-exported-output"
+                      style={{overflowX: 'auto',}}
+                      contentEditable
+                      spellCheck="false"
+                    >{exportedData.toString()}</pre>
+                  </Text>
+                </Flex>
               </Flex>
-            </Flex>
+            </>
           }
       </Flex>
     </main>
