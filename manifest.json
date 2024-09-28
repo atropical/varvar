@@ -6,7 +6,6 @@
   "ui": "dist/src/index.html",
   "editorType": ["figma", "dev"],
   "capabilities": ["inspect"],
-  "enableProposedApi": true,
   "menu": [{ "command": "export", "name": "Export Variables" }],
   "networkAccess": {
     "allowedDomains": ["none"]
