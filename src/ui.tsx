@@ -11,22 +11,17 @@ const App: React.FC = () => {
   const handleExport = () => {
     parent.postMessage({ pluginMessage: { type: "EXPORT", format } }, "*");
   };
-  const handleCopyContent = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(exportedData)
-        .then(() => {
-          console.log('Content copied to clipboard');
-          // Optionally, you can show a success message to the user
-        })
-        .catch(err => {
-          console.error('Failed to copy: ', err);
-          // Optionally, you can show an error message to the user
-        });
-    } else {
-      console.warn('Clipboard API not available');
-      // Fallback method or show a message to the user
+  const handleSelectToCopy = () => {
+    if (exportedData) {
+      const textArea = document.querySelector('#devvy-exported-output');
+      const selection = document.getSelection();
+      if (textArea && selection) {
+          selection.selectAllChildren(textArea);
+      }
+      else {
+        console.warn('Unable to select all code.')
+      }
     }
-
   };
   useEffect(() => {
     window.onmessage = (event) => {
@@ -89,13 +84,14 @@ const App: React.FC = () => {
               <Flex direction="column">
                 <Button
                   variant="secondary"
-                  onClick={handleCopyContent}
+                  onClick={handleSelectToCopy}
                   style={{ alignSelf: 'end' }}
                 >
-                  Copy
+                  Select to Copy
                 </Button>
                 <Text>
                   <pre
+                  id="devvy-exported-output"
                     contentEditable
                   >{exportedData.toString()}</pre>
                 </Text>
