@@ -8,14 +8,21 @@ Devvy is a powerful Figma plugin that allows you to export your Figma variables 
 - Preview exported data within the plugin interface
 - Automatically download exported files
 
-## Installation
+## Figma Installation
 
 1. Open Figma and go to the Community tab
 2. Search for "Devvy"
 3. Click on the plugin and then click "Install"
 
 ## Usage
+### Design Mode
+1. Open your Figma file containing variables
+2. Run the Devvy plugin from the Plugins menu
+3. Choose your desired export format (JSON or CSV)
+4. Click "Export Variables"
+5. The exported file will be automatically downloaded
 
+### Dev Mode
 1. Open your Figma file containing variables
 2. Run the Devvy plugin from the Plugins menu
 3. Choose your desired export format (JSON or CSV)
@@ -47,22 +54,5 @@ To build the plugin for production:
 ```
 npm run build
 ```
-
-## Project Structure
-
-- `src/code.ts`: Main plugin code
-- `src/ui.tsx`: React component for the plugin UI
-- `src/utils/`: Utility functions for data processing
-- `manifest.json`: Figma plugin manifest file
-
-## Technologies Used
-- React
-- TypeScript
-- Vite
-- figma-kit@beta
-
-## License
-This project is licensed under the MIT license.
-
 ## Author
 Devvy is developed and maintained by Atropical AS.
