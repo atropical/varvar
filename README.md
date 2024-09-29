@@ -1,6 +1,6 @@
-# Devvy - Figma Variable Export Plugin
+# Varvar - Figma Variable Export Plugin
 
-Devvy is a powerful Figma plugin that allows you to export your Figma variables to JSON or CSV format, making it easier to integrate your design tokens into your development workflow.
+Varvar is a Figma plugin that allows you to export your Figma variables to JSON or CSV format, making it easier to integrate your design tokens into your development workflow.
 
 ## Features
 
@@ -11,20 +11,20 @@ Devvy is a powerful Figma plugin that allows you to export your Figma variables 
 ## Figma Installation
 
 1. Open Figma and go to the Community tab
-2. Search for "Devvy"
+2. Search for "Varvar"
 3. Click on the plugin and then click "Install"
 
 ## Usage
 ### Design Mode
 1. Open your Figma file containing variables
-2. Run the Devvy plugin from the Plugins menu
+2. Run the Varvar plugin from the Plugins menu
 3. Choose your desired export format (JSON or CSV)
 4. Click "Export Variables"
 5. The exported file will be automatically downloaded
 
 ### Dev Mode
 1. Open your Figma file containing variables
-2. Run the Devvy plugin from the Plugins menu
+2. Run the Varvar plugin from the Plugins menu
 3. Choose your desired export format (JSON or CSV)
 4. Click "Export Variables"
 5. The exported file will be automatically downloaded
@@ -55,4 +55,4 @@ To build the plugin for production:
 npm run build
 ```
 ## Author
-Devvy is developed and maintained by Atropical AS.
+Varvar is developed and maintained by Atropical AS.

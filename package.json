@@ -1,7 +1,7 @@
 {
-  "name": "devvy",
+  "name": "varvar",
   "version": "1.0.0",
-  "description": "Devvy is a Figma plugin that export variables.",
+  "description": "Varvar is a Figma plugin that export variables.",
   "main": "dist/code.js",
   "type": "module",
   "scripts": {

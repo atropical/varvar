@@ -13,7 +13,7 @@ const App: React.FC = () => {
   };
   const handleSelectToCopy = () => {
     if (exportedData) {
-      const textArea = document.querySelector('#devvy-exported-output');
+      const textArea = document.querySelector('#varvar-exported-output');
       const selection = document.getSelection();
       if (textArea && selection) {
           selection.selectAllChildren(textArea);
@@ -70,7 +70,7 @@ const App: React.FC = () => {
             >
                 Export Variables
           </Button>
-          <Flex gap="2" grow="2"><Switch id="devvy-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="devvy-preview-output">Preview output</Label></Flex>
+          <Flex gap="2" grow="2"><Switch id="varvar-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="varvar-preview-output">Preview output</Label></Flex>
           {
             seeOutput && exportedData && 
             <>
@@ -99,7 +99,7 @@ const App: React.FC = () => {
                   </Button>
                   <Text>
                     <pre
-                      id="devvy-exported-output"
+                      id="varvar-exported-output"
                       style={{overflowX: 'auto',}}
                       contentEditable
                       spellCheck="false"
@@ -110,7 +110,7 @@ const App: React.FC = () => {
             </>
           }
       <Text style={{color: 'var(--figma-color-text-secondary)'}}>
-        This is an open source plugin. <Link href="https://github.com/atropical/devvy">Contribute ↗</Link>
+        This is an open source plugin. <Link href="https://github.com/atropical/dev_">Contribute ↗</Link>
         <br />
         Initiated by <Link href="https://atropical.no?utm_source=figma-plugin">Atropical</Link>.</Text>
       </Flex>
