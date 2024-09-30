@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { Flex, Text, RadioGroup, Button, Link, Switch, Label, Input } from "figma-kit"
+import { Flex, Text, RadioGroup, Button, Link, Switch, Label, Input } from "figma-kit";
 import "figma-kit/styles.css";
 
 const secondaryTextStyle = {color: 'var(--figma-color-text-secondary)'};
