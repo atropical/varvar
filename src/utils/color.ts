@@ -1,6 +1,6 @@
 import type { CssColor } from "../types";
 
-export const rgbToHex = ({ r, g, b, a = 1 }: RGBA): CssColor => {
+export const rgbToCssColor = ({ r, g, b, a = 1 }: RGBA): CssColor => {
   if (a !== 1) {
     return `rgba(${[r, g, b]
       .map((n) => Math.round(n * 255))

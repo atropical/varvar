@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { Flex, Text, RadioGroup, Button, Link, Switch, Label } from "figma-kit"
+import { Flex, Text, RadioGroup, Button, Link, Switch, Label, Input } from "figma-kit"
 import "figma-kit/styles.css";
 
+const secondaryTextStyle = {color: 'var(--figma-color-text-secondary)'};
 const App: React.FC = () => {
   const [format, setFormat] = useState<"csv" | "json">("json");
+  const defaultFilename = 'exported_variables';
+  const [filename, setFilename] = useState<string>(defaultFilename);
   const [seeOutput, setSeeOutput] = useState<boolean>(false);
   const [exportedData, setExportedData] = useState<string>("");
 
+  const handleFilename = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value
+    if(!value) {
+      value = 'exported_variables';
+    }
+    setFilename(value.replace(`.${format}`, ''));
+  };
   const handleExport = () => {
-    parent.postMessage({ pluginMessage: { type: "EXPORT", format } }, "*");
+    parent.postMessage({ pluginMessage: { type: "EXPORT.SUCCESS", format } }, "*");
   };
   const handleSelectToCopy = () => {
     if (exportedData) {
@@ -24,97 +34,107 @@ const App: React.FC = () => {
     }
   };
   useEffect(() => {
-    window.onmessage = (event) => {
-      const message = event.data.pluginMessage;
-      if (message.type === "EXPORT_RESULT") {
-        console.dir(message);
-        
-        setExportedData(message.data);
+    window.onmessage = ({ data:  {pluginMessage } }) => {
 
-        const blob = new Blob([message.data], { type: "text/plain" });
+      if (pluginMessage.type === "EXPORT.SUCCESS.RESULT") {
+        setExportedData(pluginMessage.data);
+
+        const blob = new Blob([pluginMessage.data], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `exported_variables.${message.format}`;
+        link.download = `${filename}.${pluginMessage.format}`;
         link.click();
         URL.revokeObjectURL(url);
       }
     };
-  }, [format]);
+  }, [filename, format]);
 
   return (
-    <main>
-      <Flex direction="column" gap="5">
-          <Flex direction="column" gap="2">
-            <Text style={{color: 'var(--figma-color-text-secondary)'}}>Select a format</Text>
-            <RadioGroup.Root value={format} onValueChange={(value) => setFormat(value as "csv" | "json")}>
-              <RadioGroup.Label>
-                <RadioGroup.Item
-                  value="json"
-                />
-                JSON
-              </RadioGroup.Label>
-              <RadioGroup.Label>
-                <RadioGroup.Item
-                  value="csv"
-                />
-                CSV
-              </RadioGroup.Label>
-            </RadioGroup.Root>
-          </Flex>
-          <Button
-              variant="primary"
-              fullWidth={true}
-              size="medium"
-              onClick={handleExport}
-            >
-                Export Variables
-          </Button>
-          <Flex gap="2" grow="2"><Switch id="varvar-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="varvar-preview-output">Preview output</Label></Flex>
-          {
-            seeOutput && exportedData && 
-            <>
-              <Text>Code Preview:</Text>
-              <Flex direction="column"
-                style={{
-                  position: 'relative',
-                  border: 'var(--figma-color-border)',
-                  borderRadius: 4,
-                  padding: 8,
-                  backgroundColor: 'rgba(0,0,0,.25)',
-                }}>
-                <Flex direction="column">
-                  <Button
-                    variant="secondary"
-                    onClick={handleSelectToCopy}
-                    style={{
-                      alignSelf: 'end',
-                      position: 'sticky',
-                      top: 4,
-                      right: 4,
-                      backdropFilter: 'blur(4px)'
-                    }}
-                  >
-                    Select to Copy
-                  </Button>
-                  <Text>
-                    <pre
-                      id="varvar-exported-output"
-                      style={{overflowX: 'auto',}}
-                      contentEditable
-                      spellCheck="false"
-                    >{exportedData.toString()}</pre>
-                  </Text>
-                </Flex>
+    <Flex direction="column" gap="4">
+        <Flex direction="column" gap="2">
+          <Text style={secondaryTextStyle}>Select a format</Text>
+          <RadioGroup.Root value={format} onValueChange={(value) => setFormat(value as "csv" | "json")}>
+            <RadioGroup.Label>
+              <RadioGroup.Item
+                value="json"
+              />
+              JSON
+            </RadioGroup.Label>
+            <RadioGroup.Label>
+              <RadioGroup.Item
+                value="csv"
+              />
+              CSV
+            </RadioGroup.Label>
+          </RadioGroup.Root>
+        </Flex>
+        <Flex gap="2" grow="2" direction="column">
+          <Label style={secondaryTextStyle} htmlFor="varvar-filename">Filename</Label>
+          <Input
+            id="varvar-filename"
+            placeholder={`Ex.: export_variables.${format}`}
+            value={`${filename}.${format}`}
+            required
+            selectOnClick
+            pattern={`^[a-zA-Z0-9_-]+\.(${format})$`}
+            title={`Enter a valid filename with .${format} extension`}
+            onChange={handleFilename}
+            ></Input>
+        </Flex>
+        <Flex gap="2"><Switch id="varvar-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="varvar-preview-output">Preview output</Label></Flex>
+        <Button
+            variant="primary"
+            fullWidth={true}
+            size="medium"
+            onClick={handleExport}
+          >
+              Export Variables
+        </Button>
+        {
+          seeOutput && exportedData && 
+          <>
+            <Text>Code Preview:</Text>
+            <Flex direction="column"
+              grow="2"
+              style={{
+                position: 'relative',
+                border: 'var(--figma-color-border)',
+                borderRadius: 4,
+                padding: 8,
+                backgroundColor: 'rgba(0,0,0,.25)',
+              }}>
+              <Flex direction="column">
+                <Button
+                  variant="secondary"
+                  onClick={handleSelectToCopy}
+                  style={{
+                    alignSelf: 'end',
+                    position: 'sticky',
+                    top: 4,
+                    right: 4,
+                    backdropFilter: 'blur(4px)'
+                  }}
+                >
+                  Select to Copy
+                </Button>
+                <Text style={{marginTop:'-2rem'}}>
+                  <pre
+                    id="varvar-exported-output"
+                    style={{overflowX: 'auto',}}
+                    contentEditable
+                    spellCheck="false"
+                  >{exportedData.toString()}</pre>
+                </Text>
               </Flex>
-            </>
-          }
-      <Text style={{color: 'var(--figma-color-text-secondary)'}}>
-        This is an open source plugin. <Link href="https://github.com/atropical/dev_">Contribute ↗</Link>
-        <br />
-        Initiated by <Link href="https://atropical.no?utm_source=figma-plugin">Atropical</Link>.</Text>
-      </Flex>
-    </main>
+            </Flex>
+          </>
+        }
+    <Text style={secondaryTextStyle}>
+      This is an open source plugin. <Link href="https://github.com/atropical/dev_">Contribute ↗</Link>
+      <br />
+      Initiated by <Link href="https://atropical.no?utm_source=figma-plugin">Atropical</Link>.</Text>
+    </Flex>
   );
 };
 
