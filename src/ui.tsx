@@ -10,6 +10,7 @@ const App: React.FC = () => {
   const [filename, setFilename] = useState<string>(defaultFilename);
   const [seeOutput, setSeeOutput] = useState<boolean>(false);
   const [exportedData, setExportedData] = useState<string>("");
+  const [variablesCount, setVariablesCount] = useState<number>(0);
 
   const handleFilename = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
@@ -34,9 +35,13 @@ const App: React.FC = () => {
     }
   };
   useEffect(() => {
+
     window.onmessage = ({ data:  {pluginMessage } }) => {
 
-      if (pluginMessage.type === "EXPORT.SUCCESS.RESULT") {
+      if (pluginMessage.type === "INFO.VARIABLES_COUNT") {
+        setVariablesCount(pluginMessage.count);
+      }
+      else if (pluginMessage.type === "EXPORT.SUCCESS.RESULT") {
         setExportedData(pluginMessage.data);
 
         const blob = new Blob([pluginMessage.data], { type: "text/plain" });
@@ -49,7 +54,7 @@ const App: React.FC = () => {
       }
     };
   }, [filename, format]);
-
+  parent.postMessage({ pluginMessage: { type: "INFO.GET_VARIABLES_COUNT" } }, "*");
   return (
     <Flex direction="column" gap="4">
         <Flex direction="column" gap="2">
@@ -89,12 +94,13 @@ const App: React.FC = () => {
             size="medium"
             onClick={handleExport}
           >
-              Export Variables
+              Export Variables ({variablesCount})
         </Button>
         {
           seeOutput && exportedData && 
-          <>
-            <Text>Code Preview:</Text>
+          <Flex direction="column"
+          grow="2">
+            <Text>Code Preview</Text>
             <Flex direction="column"
               grow="2"
               style={{
@@ -128,7 +134,7 @@ const App: React.FC = () => {
                 </Text>
               </Flex>
             </Flex>
-          </>
+          </Flex>
         }
     <Text style={secondaryTextStyle}>
       This is an open source plugin. <Link href="https://github.com/atropical/dev_">Contribute ↗</Link>
