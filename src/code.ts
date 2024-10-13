@@ -16,7 +16,9 @@ figma.ui.onmessage = async (msg) => {
   else if (msg.type === "EXPORT.SUCCESS") {
 
     try {
-        const data = msg.format === 'csv' ?  await exportToCSV() : await exportToJSON();
+        const data = msg.format === 'csv'
+        ?  await exportToCSV(msg.useLinkedVarRowAndColPos)
+        : await exportToJSON();
         
         figma.ui.postMessage({
           type: "EXPORT.SUCCESS.RESULT",
