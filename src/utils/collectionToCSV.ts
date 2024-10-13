@@ -68,7 +68,7 @@ const processCollectionToCSV = async ({ name, modes, variableIds }: VariableColl
 }
 
 export const exportToCSV = async (useLinkedVarRowAndColPos:boolean=false) => {
-  const csvData = ["Collection,Mode,Variable,Type,Value"];
+  const csvData = ["Collection,Mode,Variable,Type,Value,Scopes"];
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
   let collectionsVariablesMap = new Map<string, VariablePosition>();
 
