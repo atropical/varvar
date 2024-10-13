@@ -30,7 +30,19 @@ async function processCollection({
           obj.$type = resolvedType;
           if (typeof value === 'object' && 'type' in value && value.type === 'VARIABLE_ALIAS') {
             const linkedVar = await figma.variables.getVariableByIdAsync(value.id);
-            obj.$value = `$.${linkedVar  ? linkedVar.name.replace(/\//g, ".") : "Unknown"}`;
+
+            if(linkedVar) {
+              const linkedVarCollection = await figma.variables.getVariableCollectionByIdAsync(linkedVar.variableCollectionId);
+              let collName = '$.';
+
+              if(linkedVarCollection && name !== linkedVarCollection.name) {
+                collName = `$.${linkedVarCollection.name}`
+              }
+              obj.$value = `${collName}.${mode.name}.${linkedVar.name.replace(/\//g, ".")}`;
+            }
+            else {
+              obj.$value = "_unlinked"
+            }
           }
           else {
             obj.$value = isColor 
