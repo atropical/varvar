@@ -5,8 +5,8 @@ import "figma-kit/styles.css";
 
 const secondaryTextStyle = {color: 'var(--figma-color-text-secondary)'};
 const App: React.FC = () => {
+  let defaultFilename = `exported_variables`;
   const [format, setFormat] = useState<"csv" | "json">("json");
-  const defaultFilename = 'exported_variables';
   const [filename, setFilename] = useState<string>(defaultFilename);
   const [seeOutput, setSeeOutput] = useState<boolean>(true);
   const [useRowColumnPos, setUseRowColumnPos] = useState<boolean>(false);
@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const handleFilename = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
     if(!value) {
-      value = 'exported_variables';
+      value = defaultFilename;
     }
     setFilename(value.replace(`.${format}`, ''));
   };
@@ -39,8 +39,10 @@ const App: React.FC = () => {
 
     window.onmessage = ({ data:  {pluginMessage } }) => {
 
-      if (pluginMessage.type === "INFO.VARIABLES_COUNT") {
+      if (pluginMessage.type === "INFO.BASIC_INFO") {
         setVariablesCount(pluginMessage.count);
+        defaultFilename =  `${pluginMessage.filename}_variables`;
+        setFilename(defaultFilename);
       }
       else if (pluginMessage.type === "EXPORT.SUCCESS.RESULT") {
         setExportedData(pluginMessage.data);
@@ -55,7 +57,7 @@ const App: React.FC = () => {
       }
     };
   }, [filename, format]);
-  parent.postMessage({ pluginMessage: { type: "INFO.GET_VARIABLES_COUNT" } }, "*");
+  parent.postMessage({ pluginMessage: { type: "INFO.GET_BASIC_INFO" } }, "*");
   return (
     <Flex direction="column" gap="4">
         <Flex direction="column" gap="2">
