@@ -6,7 +6,7 @@ async function processCollection({
   variableIds,
 }: VariableCollection): Promise<[]> {
   const collection: [] = [];
-  const validTypes = new Set(["COLOR", "FLOAT"]);
+  const validTypes = new Set(["COLOR", "FLOAT", "BOOLEAN", "STRING"]);
 
   for(const mode of modes) {
     const file = { collection: name, mode: mode.name, variables: {} };
@@ -24,13 +24,22 @@ async function processCollection({
             obj[groupName] = obj[groupName] || {};
             obj = obj[groupName];
           });
-          obj.$type = resolvedType === "COLOR" ? "color" : "number";
+          const isColor: boolean = resolvedType === "COLOR";
+          const isNumber: boolean = resolvedType === "FLOAT";
+          const isBool: boolean = resolvedType === "BOOLEAN";
+          obj.$type = resolvedType;
           if (typeof value === 'object' && 'type' in value && value.type === 'VARIABLE_ALIAS') {
             const linkedVar = await figma.variables.getVariableByIdAsync(value.id);
             obj.$value = `$.${linkedVar  ? linkedVar.name.replace(/\//g, ".") : "Unknown"}`;
           }
           else {
-            obj.$value = resolvedType === "COLOR" ? rgbToCssColor(value as RGBA) : value;
+            obj.$value = isColor 
+              ? rgbToCssColor(value as RGBA)
+              : isNumber
+                ? parseFloat(value as string)
+                  : isBool
+                    ? Boolean(value)
+                    : String(value);
           }
         }
       }

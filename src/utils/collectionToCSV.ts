@@ -4,7 +4,7 @@ type VariablePosition = { row: number, column: string, collection: string; mode:
 
 const processCollectionToCSV = async ({ name, modes, variableIds }: VariableCollection, lastCollectionRowIndex?:number, collectionsVariablesMap?:Map<string, VariablePosition>): Promise<string[]> => {
   const csvRows: string[] = [];
-  const validTypes = new Set(["COLOR", "FLOAT"]);
+  const validTypes = new Set(["COLOR", "FLOAT", "BOOLEAN", "STRING"]);
   let rowIndex = lastCollectionRowIndex;
 
   for (const mode of modes) {
