@@ -14,7 +14,7 @@ async function processCollection({
     for (const variableId of variableIds) {
       const figVar = await figma.variables.getVariableByIdAsync(variableId);
       if (figVar !== null) {
-        const { name, resolvedType, valuesByMode }: Variable = figVar;
+        const { name, resolvedType, valuesByMode, scopes }: Variable = figVar;
         const value: VariableValue = valuesByMode[mode.modeId];
 
         if (value !== undefined && validTypes.has(resolvedType)) {
@@ -28,6 +28,7 @@ async function processCollection({
           const isNumber: boolean = resolvedType === "FLOAT";
           const isBool: boolean = resolvedType === "BOOLEAN";
           obj.$type = resolvedType;
+          obj.$scopes = scopes;
           if (typeof value === 'object' && 'type' in value && value.type === 'VARIABLE_ALIAS') {
             const linkedVar = await figma.variables.getVariableByIdAsync(value.id);
 
