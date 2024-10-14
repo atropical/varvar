@@ -6,17 +6,22 @@ import { exportToJSON } from "./utils/collectionToJSON";
 figma.showUI(__html__, { width: 600, height: 500, themeColors: true });
 
 figma.ui.onmessage = async (msg) => {
-  if(msg.type === "INFO.GET_VARIABLES_COUNT") {
+  
+  if(msg.type === "INFO.GET_BASIC_INFO") {
     const vars = await figma.variables.getLocalVariablesAsync();
+    const filename = figma.root.name;
     figma.ui.postMessage({
-      type: 'INFO.VARIABLES_COUNT',
-      count: vars.length
+      type: 'INFO.BASIC_INFO',
+      count: vars.length,
+      filename
     })
   }
   else if (msg.type === "EXPORT.SUCCESS") {
 
     try {
-        const data = msg.format === 'csv' ?  await exportToCSV() : await exportToJSON();
+        const data = msg.format === 'csv'
+        ?  await exportToCSV(msg.useLinkedVarRowAndColPos)
+        : await exportToJSON();
         
         figma.ui.postMessage({
           type: "EXPORT.SUCCESS.RESULT",

@@ -5,22 +5,23 @@ import "figma-kit/styles.css";
 
 const secondaryTextStyle = {color: 'var(--figma-color-text-secondary)'};
 const App: React.FC = () => {
+  let defaultFilename = `exported_variables`;
   const [format, setFormat] = useState<"csv" | "json">("json");
-  const defaultFilename = 'exported_variables';
   const [filename, setFilename] = useState<string>(defaultFilename);
-  const [seeOutput, setSeeOutput] = useState<boolean>(false);
+  const [seeOutput, setSeeOutput] = useState<boolean>(true);
+  const [useRowColumnPos, setUseRowColumnPos] = useState<boolean>(false);
   const [exportedData, setExportedData] = useState<string>("");
   const [variablesCount, setVariablesCount] = useState<number>(0);
 
   const handleFilename = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
     if(!value) {
-      value = 'exported_variables';
+      value = defaultFilename;
     }
     setFilename(value.replace(`.${format}`, ''));
   };
   const handleExport = () => {
-    parent.postMessage({ pluginMessage: { type: "EXPORT.SUCCESS", format } }, "*");
+    parent.postMessage({ pluginMessage: { type: "EXPORT.SUCCESS", format, useLinkedVarRowAndColPos: useRowColumnPos } }, "*");
   };
   const handleSelectToCopy = () => {
     if (exportedData) {
@@ -38,8 +39,10 @@ const App: React.FC = () => {
 
     window.onmessage = ({ data:  {pluginMessage } }) => {
 
-      if (pluginMessage.type === "INFO.VARIABLES_COUNT") {
+      if (pluginMessage.type === "INFO.BASIC_INFO") {
         setVariablesCount(pluginMessage.count);
+        defaultFilename =  `${pluginMessage.filename}_variables`;
+        setFilename(defaultFilename);
       }
       else if (pluginMessage.type === "EXPORT.SUCCESS.RESULT") {
         setExportedData(pluginMessage.data);
@@ -54,7 +57,7 @@ const App: React.FC = () => {
       }
     };
   }, [filename, format]);
-  parent.postMessage({ pluginMessage: { type: "INFO.GET_VARIABLES_COUNT" } }, "*");
+  parent.postMessage({ pluginMessage: { type: "INFO.GET_BASIC_INFO" } }, "*");
   return (
     <Flex direction="column" gap="4">
         <Flex direction="column" gap="2">
@@ -74,7 +77,7 @@ const App: React.FC = () => {
             </RadioGroup.Label>
           </RadioGroup.Root>
         </Flex>
-        <Flex gap="2" grow="2" direction="column">
+        <Flex gap="2" direction="column">
           <Label style={secondaryTextStyle} htmlFor="varvar-filename">Filename</Label>
           <Input
             id="varvar-filename"
@@ -87,7 +90,18 @@ const App: React.FC = () => {
             onChange={handleFilename}
             ></Input>
         </Flex>
-        <Flex gap="2"><Switch id="varvar-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="varvar-preview-output">Preview output</Label></Flex>
+        <Flex gap="2" direction="column">
+        <Label style={secondaryTextStyle}>Options</Label>
+          {
+            format ==='csv' && 
+            <Flex gap="2">
+              <Switch id="varvar-export-row-column-pos" onCheckedChange={setUseRowColumnPos} checked={useRowColumnPos} /> <Label htmlFor="varvar-export-row-column-pos">Use row &amp; column positions (i.e.: <code>=E7</code>) for linked vars</Label>
+            </Flex>
+          }
+          <Flex gap="2">
+            <Switch id="varvar-preview-output" onCheckedChange={setSeeOutput} checked={seeOutput} /> <Label htmlFor="varvar-preview-output">Preview output</Label>
+          </Flex>
+        </Flex>
         <Button
             variant="primary"
             fullWidth={true}
@@ -98,11 +112,10 @@ const App: React.FC = () => {
         </Button>
         {
           seeOutput && exportedData && 
-          <Flex direction="column"
-          grow="2">
+          <Flex direction="column" gap="2">
             <Text>Code Preview</Text>
             <Flex direction="column"
-              grow="2"
+              gap="2"
               style={{
                 position: 'relative',
                 border: 'var(--figma-color-border)',
