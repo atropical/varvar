@@ -1,0 +1,88 @@
+import { rgbToCssColor } from "./color";
+
+async function processCollection({
+  name,
+  modes,
+  variableIds,
+}: VariableCollection): Promise<{ root: string[], theme: string[] }> {
+  const collection: string[] = [];
+  let rootVars: string[] = [];
+  const validTypes = new Set(["COLOR", "FLOAT", "BOOLEAN", "STRING"]);
+
+  for(const mode of modes) {
+    let cssVars: string[] = [];
+
+    for (const variableId of variableIds) {
+      const figVar = await figma.variables.getVariableByIdAsync(variableId);
+      if (figVar !== null) {
+        const { name, resolvedType, valuesByMode }: Variable = figVar;
+        const value: VariableValue = valuesByMode[mode.modeId];
+
+        if (value !== undefined && validTypes.has(resolvedType)) {
+          const cssVarName = `--${name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase()}`;
+          let cssValue: string;
+  
+          const isColor: boolean = resolvedType === "COLOR";
+          const isNumber: boolean = resolvedType === "FLOAT";
+          const isBool: boolean = resolvedType === "BOOLEAN";
+
+          if (typeof value === 'object' && 'type' in value && value.type === 'VARIABLE_ALIAS') {
+            const linkedVar = await figma.variables.getVariableByIdAsync(value.id);
+
+            if(linkedVar) {
+              const linkedName = linkedVar.name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase();
+              cssValue = `var(--${linkedName})`;
+            }
+            else {
+              cssValue = "initial";
+            }
+          }
+          else {
+            cssValue = isColor 
+              ? rgbToCssColor(value as RGBA)
+              : isNumber
+                ? `${parseFloat(value as string)}px`
+                  : isBool
+                    ? Boolean(value) ? 'var(--TRUE)' : 'var(--FALSE)'
+                    : `"${String(value)}"`;
+          }
+          cssVars.push(`  ${cssVarName}: ${cssValue};`);
+        }
+      } 
+    }
+    const isRoot =  (mode.name === 'Default' || mode.name === 'Mode 1');
+    let selector;
+    if(isRoot) {
+      rootVars.push(... cssVars);
+    }
+    else {
+      selector = `[data-theme="${mode.name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase()}"]`;
+      collection.push(`${selector} {\n${cssVars.join('\n')}\n}`);
+    }
+    cssVars= [];
+  }
+  return { root: rootVars, theme: collection };
+}
+
+export const exportToCSS = async () => {
+  const collections = await figma.variables.getLocalVariableCollectionsAsync();
+  try {
+    const rootVars = new Set<string>();  // Use Set to avoid duplicates
+    const nonRootBlocks: string[] = [];
+    
+    for(const collection of collections) {
+      const { root, theme } = await processCollection(collection);
+      root.forEach(v => rootVars.add(v));
+      nonRootBlocks.push(...theme);
+    }
+
+    // Create single root selector with all variables including TRUE/FALSE
+    const rootBlock = `:root {\n  --TRUE: 1;\n  --FALSE: 0;\n${Array.from(rootVars).join('\n')}\n}`;
+
+    return [rootBlock, ...nonRootBlocks].join('\n\n');
+  } catch (err) {
+    console.error(err);
+    return `/* Something went wrong while converting:
+            ${err}*/`;
+  }
+};
