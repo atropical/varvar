@@ -1,14 +1,15 @@
 # VarVar - Figma Variable Export Plugin
 
-VarVar is a Figma plugin that allows you to export your Figma variables to JSON or CSV format, making it easier to integrate your design tokens into your development workflow.
+VarVar is a Figma plugin that allows you to export your Figma variables to JSON, CSV or CSS formats, making it easier to integrate your design tokens into your development workflow.
 
 ## Features
 
-- Export Figma variables to JSON or CSV format
+- Export Figma variables to JSON, CSV or CSS formats
 - Identifies linked variables*
    - JSON: linked variables start with `$.VARIABLE.PATH`
    - CSV: linked variables start with `=VARIABLE/PATH`
      - **Option:** *Use row & column positions.* This will produce instead a "formula-like" (i.e. `=E7`) linking in spreadsheet programs.
+   - CSS: linked variables will be linked like so `--var-name: var(--VARIABLE)`
 - Preview exported data within the plugin interface
 - Automatically download exported files
 
@@ -24,14 +25,14 @@ VarVar is a Figma plugin that allows you to export your Figma variables to JSON 
 ### Design Mode
 1. Open your Figma file containing variables
 2. Run the VarVar plugin from the Plugins menu
-3. Choose your desired export format (JSON or CSV)
+3. Choose your desired export format (JSON, CSV or CSS)
 4. Click "Export Variables"
 5. The exported file will be automatically downloaded
 
 ### Dev Mode
 1. Open your Figma file containing variables
 2. Run the VarVar plugin from the Plugins menu
-3. Choose your desired export format (JSON or CSV)
+3. Choose your desired export format (JSON, CSV or CSS)
 4. Click "Export Variables"
 5. The exported file will be automatically downloaded
 
