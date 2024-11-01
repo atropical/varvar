@@ -2,6 +2,7 @@
 
 import { exportToCSV } from "./utils/collectionToCSV";
 import { exportToJSON } from "./utils/collectionToJSON";
+import { exportToCSS } from "./utils/collectionToCSS";
 
 figma.showUI(__html__, { width: 600, height: 500, themeColors: true });
 
@@ -20,8 +21,10 @@ figma.ui.onmessage = async (msg) => {
 
     try {
         const data = msg.format === 'csv'
-        ?  await exportToCSV(msg.useLinkedVarRowAndColPos)
-        : await exportToJSON();
+          ? await exportToCSV(msg.useLinkedVarRowAndColPos)
+          : msg.format === 'json'
+            ? await exportToJSON()
+            : await exportToCSS();
         
         figma.ui.postMessage({
           type: "EXPORT.SUCCESS.RESULT",

@@ -6,7 +6,7 @@ import "figma-kit/styles.css";
 const secondaryTextStyle = {color: 'var(--figma-color-text-secondary)'};
 const App: React.FC = () => {
   let defaultFilename = `exported_variables`;
-  const [format, setFormat] = useState<"csv" | "json">("json");
+  const [format, setFormat] = useState<"csv" | "json" | "css">("json");
   const [filename, setFilename] = useState<string>(defaultFilename);
   const [seeOutput, setSeeOutput] = useState<boolean>(true);
   const [useRowColumnPos, setUseRowColumnPos] = useState<boolean>(false);
@@ -62,7 +62,7 @@ const App: React.FC = () => {
     <Flex direction="column" gap="4">
         <Flex direction="column" gap="2">
           <Text style={secondaryTextStyle}>Select a format</Text>
-          <RadioGroup.Root value={format} onValueChange={(value) => setFormat(value as "csv" | "json")}>
+          <RadioGroup.Root value={format} onValueChange={(value) => setFormat(value as "csv" | "json" | "css")}>
             <RadioGroup.Label>
               <RadioGroup.Item
                 value="json"
@@ -74,6 +74,12 @@ const App: React.FC = () => {
                 value="csv"
               />
               CSV
+            </RadioGroup.Label>
+            <RadioGroup.Label>
+              <RadioGroup.Item
+                value="css"
+              />
+              CSS
             </RadioGroup.Label>
           </RadioGroup.Root>
         </Flex>
