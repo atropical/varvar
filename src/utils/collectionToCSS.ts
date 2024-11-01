@@ -1,4 +1,5 @@
 import { rgbToCssColor } from "./color";
+import { toCssVar } from "./stringTransformation";
 
 async function processCollection({
   name,
@@ -19,7 +20,7 @@ async function processCollection({
         const value: VariableValue = valuesByMode[mode.modeId];
 
         if (value !== undefined && validTypes.has(resolvedType)) {
-          const cssVarName = `--${name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase()}`;
+          const cssVarName = toCssVar(name, true);
           let cssValue: string;
   
           const isColor: boolean = resolvedType === "COLOR";
@@ -30,7 +31,7 @@ async function processCollection({
             const linkedVar = await figma.variables.getVariableByIdAsync(value.id);
 
             if(linkedVar) {
-              const linkedName = linkedVar.name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase();
+              const linkedName = toCssVar(linkedVar.name);
               cssValue = `var(--${linkedName})`;
             }
             else {
@@ -56,7 +57,7 @@ async function processCollection({
       rootVars.push(... cssVars);
     }
     else {
-      selector = `[data-theme="${mode.name.replace(/\//g, "--").replace(/\s/g, '-').toLowerCase()}"]`;
+      selector = `.${toCssVar(name)}--${toCssVar(mode.name)}`;
       collection.push(`${selector} {\n${cssVars.join('\n')}\n}`);
     }
     cssVars= [];
